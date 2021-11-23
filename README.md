@@ -2,6 +2,12 @@
 
 This is a kedro plugin that writes information from kedro hooks into a database.
 
+## Authors
+- Aljoscha Schulte
+- Christoph Schulthess
+- [Uttam Dhakal](https://github.com/uttamdhakal)
+- [Zohaib Akhtar Khan](https://github.com/zakhan4)
+
 ## Installation
 
 #### For development:
