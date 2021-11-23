@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="waldo_kedro_plugin",
-    version="0.3.0",
+    version="1.0",
     packages=["waldo_kedro_plugin"],
     install_requires=[
         "kedro-viz==3.14.0",
