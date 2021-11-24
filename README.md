@@ -1,10 +1,10 @@
 # Waldo Kedro Plugin
 
-This is a kedro plugin that writes information from kedro hooks into a database.
+This is a kedro plugin that writes information from kedro hooks into a database. The code was created in the [_Waldo_](https://www.snet.tu-berlin.de/menue/projects/waldo/) research project.
 
 ## Authors
-- Aljoscha Schulte
-- Christoph Schulthess
+- [Aljoscha Schulte](https://www.snet.tu-berlin.de/menue/team/aljoscha_schulte/)
+- [Christoph Schulthess](https://www.snet.tu-berlin.de/menue/team/christoph_schulthess/)
 - [Uttam Dhakal](https://github.com/uttamdhakal)
 - [Zohaib Akhtar Khan](https://github.com/zakhan4)
 
@@ -26,10 +26,10 @@ pip install -e $PATH_TO_PLUGIN_PROJECT
 
 #### If you don't intend to edit the plugin:
 
-Install it from Test PyPI:
+Install it from PyPI:
 
 ```
-pip install -i https://test.pypi.org/simple/ waldo-kedro-plugin
+pip install waldo-kedro-plugin
 ```
 
 ## Available hooks
