@@ -78,7 +78,7 @@ def partition_indexes(total_size: int, chunk_size: int) -> List[Tuple[int, int]]
     :return: list of tuples for chunk's start and end indices
     """
     # Compute the chunk size (integer division; i.e. assuming Python 2.7)
-    num_of_partitions = math.floor(total_size / chunk_size)
+    num_of_partitions = math.ceil(total_size / chunk_size)
     # How many chunks need an extra 1 added to the size?
     remainder = total_size - chunk_size * num_of_partitions
     a = 0
@@ -86,7 +86,7 @@ def partition_indexes(total_size: int, chunk_size: int) -> List[Tuple[int, int]]
     for i in range(num_of_partitions):
         b = a + chunk_size + (i < remainder)
         # Yield the inclusive-inclusive range
-        indexes.append((a, b - 1))
+        indexes.append((a, b))
         a = b
 
     return indexes
