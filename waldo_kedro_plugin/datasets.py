@@ -86,10 +86,10 @@ class OutlierScoreDataSet (SQLTableDataSet):
         and use copy_from() to copy it to the table
         """
         cursor = conn.cursor()
-        for value in partition_indexes(df.size, self._save_args["chunksize"]):
+        for value in partition_indexes(len(df.index), self._save_args["chunksize"]):
             # save dataframe to an in memory buffer
             buffer = StringIO()
-            df[value[0]:value[1]].to_csv(buffer, index=self._save_args["index"], header=False)
+            df.iloc[value[0]:value[1]].to_csv(buffer, index=self._save_args["index"], header=False)
             buffer.seek(0)
 
             try:
