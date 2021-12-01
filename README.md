@@ -3,7 +3,7 @@
 This is a kedro plugin that writes information from kedro hooks into a database. The code was created in the [_Waldo_](https://www.snet.tu-berlin.de/menue/projects/waldo/) research project.
 
 ## Authors
-- [Aljoscha Schulte](https://www.snet.tu-berlin.de/menue/team/aljoscha_schulte/)
+- [Aljoscha Schulte](https://www.tu.berlin/en/snet/about-us/team-and-persons/aljoscha-schulte/)
 - [Christoph Schulthess](https://www.snet.tu-berlin.de/menue/team/christoph_schulthess/)
 - [Uttam Dhakal](https://github.com/uttamdhakal)
 - [Zohaib Akhtar Khan](https://github.com/zakhan4)
