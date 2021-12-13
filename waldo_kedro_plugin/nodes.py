@@ -2,27 +2,6 @@
 Generic Kedro Nodes
 """
 
-#  Copyright © 2021 Technische Unversität Berlin, Service-centric Networking (SNET) https://snet.tu-berlin.de/
-#  Aljoscha Schulte, Christoph Schulthess, Uttam Dhakal, Zohaib Akhtar Khan
-#
-#  Permission is hereby granted, free of charge, to any person obtaining a copy
-#  of this software and associated documentation files (the "Software"), to deal
-#  in the Software without restriction, including without limitation the rights
-#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#  copies of the Software, and to permit persons to whom the Software is
-#  furnished to do so, subject to the following conditions:
-#
-#  The above copyright notice and this permission notice shall be included in all
-#  copies or substantial portions of the Software.
-#
-#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#  SOFTWARE.
-
 import logging
 import json
 from sklearn.ensemble import IsolationForest
@@ -31,6 +10,38 @@ from sklearn.neighbors import LocalOutlierFactor
 from .plugin import hooks
 import pandas as pd
 from .views import ADAlgorithms, create_samples_os_view
+
+iso_params = {
+    "IsolationForest.n_estimators": 100,
+    "IsolationForest.max_samples": "auto",
+    "IsolationForest.contamination": "auto",
+    "IsolationForest.max_features": 1.0,
+    "IsolationForest.bootstrap": False,
+    "IsolationForest.n_jobs": None,
+    "IsolationForest.random_state": None,
+    "IsolationForest.verbose": 0,
+    "IsolationForest.warm_start": False,
+}
+
+ell_params = {
+    "EllipticEnvelope.store_precision": True,
+    "EllipticEnvelope.assume_centered": False,
+    "EllipticEnvelope.support_fraction": None,
+    "EllipticEnvelope.contamination": 0.1,
+    "EllipticEnvelope.random_state": None,
+}
+
+local_params = {
+    "LocalOutlierFactor.n_neighbors": 20,
+    "LocalOutlierFactor.algorithm": "auto",
+    "LocalOutlierFactor.leaf_size": 30,
+    "LocalOutlierFactor.metric": "minkowski",
+    "LocalOutlierFactor.p": 2,
+    "LocalOutlierFactor.metric_params": None,
+    "LocalOutlierFactor.contamination": "auto",
+    "LocalOutlierFactor.novelty": False,
+    "LocalOutlierFactor.n_jobs": None,
+}
 
 
 def isolation_forest(data: pd.DataFrame, params: dict) -> pd.DataFrame:
@@ -92,15 +103,59 @@ def outlier_score(algo: ADAlgorithms, data: pd.DataFrame, params: dict) -> pd.Da
     x = data[cols].to_numpy()
     try:
         if algo == ADAlgorithms.IsolationForest:
-            algo_obj: IsolationForest = IsolationForest(n_jobs=-1).fit(x)
+            try:
+                iso_params.update(params["IsolationForest"])
+            except KeyError:
+                logging.info(
+                    "No parameters for Isolation Forest found, using the default ones"
+                )
+            algo_obj: IsolationForest = IsolationForest(
+                n_estimators=iso_params["IsolationForest.n_estimators"],
+                max_samples=iso_params["IsolationForest.max_samples"],
+                contamination=iso_params["IsolationForest.contamination"],
+                max_features=iso_params["IsolationForest.max_features"],
+                bootstrap=iso_params["IsolationForest.bootstrap"],
+                n_jobs=iso_params["IsolationForest.n_jobs"],
+                random_state=iso_params["IsolationForest.random_state"],
+                verbose=iso_params["IsolationForest.verbose"],
+                warm_start=iso_params["IsolationForest.warm_start"],
+            ).fit(x)
             ols = -algo_obj.score_samples(x)
             prd = algo_obj.predict(x)
         elif algo == ADAlgorithms.EllipticEnvelope:
-            algo_obj: EllipticEnvelope = EllipticEnvelope().fit(x)
+            try:
+                ell_params.update(params["EllipticEnvelope"])
+            except KeyError:
+                logging.info(
+                    "No parameters for Elliptic Envelope found, using the default ones"
+                )
+            algo_obj: EllipticEnvelope = EllipticEnvelope(
+                store_precision=ell_params["EllipticEnvelope.store_precision"],
+                assume_centered=ell_params["EllipticEnvelope.assume_centered"],
+                support_fraction=ell_params["EllipticEnvelope.support_fraction"],
+                contamination=ell_params["EllipticEnvelope.contamination"],
+                random_state=ell_params["EllipticEnvelope.random_state"],
+            ).fit(x)
             ols = -algo_obj.score_samples(x)
             prd = algo_obj.predict(x)
         elif algo == ADAlgorithms.LocalOutlierFactor:
-            algo_obj: LocalOutlierFactor = LocalOutlierFactor(n_jobs=-1).fit(x)
+            try:
+                local_params.update(params["LocalOutlierFactor"])
+            except KeyError:
+                logging.info(
+                    "No parameters for Local Outlier Factor found, using the default ones"
+                )
+            algo_obj: LocalOutlierFactor = LocalOutlierFactor(
+                n_neighbors=local_params["LocalOutlierFactor.n_neighbors"],
+                algorithm=local_params["LocalOutlierFactor.algorithm"],
+                leaf_size=local_params["LocalOutlierFactor.leaf_size"],
+                metric=local_params["LocalOutlierFactor.metric"],
+                p=local_params["LocalOutlierFactor.p"],
+                metric_params=local_params["LocalOutlierFactor.metric_params"],
+                contamination=local_params["LocalOutlierFactor.contamination"],
+                novelty=local_params["LocalOutlierFactor.novelty"],
+                n_jobs=local_params["LocalOutlierFactor.n_jobs"],
+            ).fit(x)
             ols = -algo_obj.negative_outlier_factor_
             prd = algo_obj.fit_predict(x)
     except MemoryError as e:

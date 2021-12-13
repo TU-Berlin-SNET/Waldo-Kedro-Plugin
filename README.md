@@ -114,3 +114,15 @@ provide the credentials to access it in a `credentials.yml` file in a kedro proj
 
 - Database can have any name, as long as it is correctly provided in `credentials.yml` file.
 - All the required tables will be created inside the database automatically, once you will run the project for the first time.
+
+## Parameters for anomaly detection algorithms
+
+The parameters for anomaly detection algorithms are to be provided in `parameters.yml` file in a kedro project. The parameters should be nested with model parameter and follow the following format:
+
+````
+model_param1:
+.....
+IsolationForest:
+    IsolationForest.n_estimators: 100
+    ...
+````
